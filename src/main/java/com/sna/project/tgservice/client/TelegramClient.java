@@ -8,7 +8,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import com.sna.project.tgservice.metrics.Metrics;
 
 import javax.net.ssl.SSLSession;
 
@@ -45,17 +45,17 @@ public class TelegramClient {
         } catch (JsonProcessingException e) {
             throw new TelegramClientException("Request body is not parsable");
         }
-       Histogram requestLatency = Histogram.build()
-                .name("requests_latency_seconds").help("Request latency in seconds.").register();
 
-            Histogram.Timer requestTimer = requestLatency.startTimer();
+        HttpResponse<String> res = null;
+
             try {
-                HttpResponse<String> res = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                res = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             } finally {
-                requestTimer.observeDuration();
+                Metrics.getRequestDuration().labels(String.valueOf(res.statusCode()), res.request().method()).observe(8);
+
             }
 
-        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        return res;
     }
 
     static class TelegramClientException extends RuntimeException {

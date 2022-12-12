@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.sna.project.tgservice.client.model.SendMessageRequest;
+import io.prometheus.client.Histogram;
 
 public class TelegramClient {
     private final HttpClient httpClient;
@@ -44,6 +45,16 @@ public class TelegramClient {
         } catch (JsonProcessingException e) {
             throw new TelegramClientException("Request body is not parsable");
         }
+       Histogram requestLatency = Histogram.build()
+                .name("requests_latency_seconds").help("Request latency in seconds.").register();
+
+            Histogram.Timer requestTimer = requestLatency.startTimer();
+            try {
+                HttpResponse<String> res = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            } finally {
+                requestTimer.observeDuration();
+            }
+
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 

@@ -12,11 +12,11 @@ public class ApplicationController {
 
         public Hello(String text) {
             this.text = text;
-        }
-    }
 
-    @GetMapping("/hello")
-    public Hello hello(@RequestParam(value = "name", defaultValue = "World") String name) {
-        return new Hello("Hello " + name);
+    }
+//
+//    @GetMapping("/hello")
+//    public Hello hello(@RequestParam(value = "name", defaultValue = "World") String name) {
+//        return new Hello("Hello " + name);
     }
 }

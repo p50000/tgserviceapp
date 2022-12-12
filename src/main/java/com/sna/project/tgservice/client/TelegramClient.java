@@ -3,10 +3,14 @@ package com.sna.project.tgservice.client;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import javax.net.ssl.SSLSession;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +50,49 @@ public class TelegramClient {
     static class TelegramClientException extends RuntimeException {
         TelegramClientException(String cause) {
             super(cause);
+        }
+    }
+
+    class TimeoutHttpResponse implements HttpResponse {
+
+        @Override
+        public int statusCode() {
+            return 408;
+        }
+
+        @Override
+        public HttpRequest request() {
+            return null;
+        }
+
+        @Override
+        public Optional<HttpResponse> previousResponse() {
+            return Optional.empty();
+        }
+
+        @Override
+        public HttpHeaders headers() {
+            return null;
+        }
+
+        @Override
+        public Object body() {
+            return "Request not complete because of timeout";
+        }
+
+        @Override
+        public Optional<SSLSession> sslSession() {
+            return Optional.empty();
+        }
+
+        @Override
+        public URI uri() {
+            return null;
+        }
+
+        @Override
+        public HttpClient.Version version() {
+            return null;
         }
     }
 }

@@ -27,7 +27,7 @@ public class MessageSendingJob {
             try {
                 var response = telegramClient.sendMessages(342806863L, "renobta hello!");
 
-                Thread.sleep(60000L);
+                Thread.sleep(60000);
             } catch (InterruptedException | IOException e) {
                 System.out.println(e.getMessage());
                 // Restore the interrupted status

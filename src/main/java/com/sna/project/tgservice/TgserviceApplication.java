@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.HTTPServer;
 import io.prometheus.client.exporter.common.TextFormat;
+import io.prometheus.client.hotspot.DefaultExports;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.io.StringWriter;
@@ -20,6 +21,7 @@ public class TgserviceApplication {
 		TextFormat.write004(writer, registry.metricFamilySamples());
 		HttpServer server = HttpServer.create(new InetSocketAddress(8001), 0);
 		HTTPServer.HTTPMetricHandler mHandler = new HTTPServer.HTTPMetricHandler(registry);
+		DefaultExports.initialize();
 		server.createContext("/metrics", mHandler);
 		server.setExecutor(null); // creates a default executor
 		server.start();

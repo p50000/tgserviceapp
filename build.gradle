@@ -12,6 +12,8 @@ repositories {
 	mavenCentral()
 }
 
+
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-jetty'
@@ -24,4 +26,12 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'com.sna.project.tgservice.TgserviceApplication'
+		)
+	}
 }

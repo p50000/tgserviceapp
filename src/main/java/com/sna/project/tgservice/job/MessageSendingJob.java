@@ -23,17 +23,20 @@ public class MessageSendingJob {
     @PostConstruct
     public void runScript() throws InterruptedException {
         System.out.println("Method called");
-        while (true) {
-            try {
-                var response = telegramClient.sendMessages(342806863L, "renobta hello!");
+        Thread worker = new Thread(() -> {
+            while (true) {
+                try {
+                    var response = telegramClient.sendMessages(342806863L, "renobta hello!");
 
-                Thread.sleep(60000);
-            } catch (InterruptedException | IOException e) {
-                System.out.println(e.getMessage());
-                // Restore the interrupted status
-                Thread.currentThread().interrupt();
-                return;
+                    Thread.sleep(60000);
+                } catch (InterruptedException | IOException e) {
+                    System.out.println(e.getMessage());
+                    // Restore the interrupted status
+                    Thread.currentThread().interrupt();
+                    return;
+                }
             }
-        }
+        });
+        worker.start();
     }
 }

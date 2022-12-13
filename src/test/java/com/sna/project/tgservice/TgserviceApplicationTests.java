@@ -1,13 +1,13 @@
 package com.sna.project.tgservice;
 
+import com.sna.project.tgservice.configuration.ApplicationTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@ApplicationTest
 class TgserviceApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() {
 	}
 
 }

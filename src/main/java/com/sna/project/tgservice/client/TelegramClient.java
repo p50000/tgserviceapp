@@ -16,7 +16,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.sna.project.tgservice.client.model.SendMessageRequest;
-import io.prometheus.client.Histogram;
 
 public class TelegramClient {
     private final HttpClient httpClient;
@@ -25,9 +24,9 @@ public class TelegramClient {
     private final ObjectWriter jsonWriter;
     private final static String BASE_URL = "https://api.telegram.org";
 
-    public TelegramClient(String telegramBotToken) {
+    public TelegramClient(String telegramBotToken, HttpClient httpClient) {
         this.requestUrl = BASE_URL + "/bot" + telegramBotToken;
-        this.httpClient = HttpClient.newHttpClient();
+        this.httpClient = httpClient;
         this.jsonWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
     }
 
@@ -64,20 +63,30 @@ public class TelegramClient {
         }
     }
 
-    class TimeoutHttpResponse implements HttpResponse {
+    public static class MockHttpResponse implements HttpResponse<String> {
+
+        private final int statusCode;
+        private final String body;
+
+        public MockHttpResponse(int statusCode, String body) {
+            this.statusCode = statusCode;
+            this.body = body;
+        }
 
         @Override
         public int statusCode() {
-            return 408;
+            return statusCode;
         }
 
         @Override
         public HttpRequest request() {
-            return null;
+            return HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.telegram.org/sendMessage"))
+                    .build();
         }
 
         @Override
-        public Optional<HttpResponse> previousResponse() {
+        public Optional<HttpResponse<String>> previousResponse() {
             return Optional.empty();
         }
 
@@ -87,8 +96,8 @@ public class TelegramClient {
         }
 
         @Override
-        public Object body() {
-            return "Request not complete because of timeout";
+        public String body() {
+            return body;
         }
 
         @Override

@@ -33,8 +33,6 @@ docker-build:
 
 deploy:
   stage: deploy
-  tags:
-    - deploy
   script:
     - echo "Deploy starting..."
     - chmod og= $ID_RSA

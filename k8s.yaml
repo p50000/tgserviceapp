@@ -1,20 +1,19 @@
-apiVersion: client.authentication.k8s.io/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tgservice
-  namespace: default
+  name: test-node
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tgservice
+      app: test-node
   template:
     metadata:
-      namespace: deafult
       labels:
-        app: tgservice
+        app: test-node
     spec:
       containers:
         - name: tgservice
           image: cr.yandex/crpoatffns8a7vbcrg9j/tgservice
-          imagePullPolicy: Always
+          ports:
+          - containerPort: 8001

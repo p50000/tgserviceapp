@@ -17,11 +17,11 @@ stages:
   - deploy
 
 gradle-build:
-  image: openjdk:17
+  image: gcr.io/cloud-builders/kubectl:latest
   stage: build
   script:
     - echo "Build starting..."
-    - ./gradlew assemble && java -jar build/tgservice.jar
+    - gradle build && java -jar build/tgservice.jar
   artifacts:
     paths:
       - build/*.jar

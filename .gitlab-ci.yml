@@ -48,9 +48,10 @@ docker-build:
     - docker push cr.yandex/crpoatffns8a7vbcrg9j/tgservice
   
 deploy:
-  image: gcr.io/cloud-builders/kubectl:latest
+  image: cr.yandex/yc/metadata-token-docker-helper:0.2
   stage: deploy
   script:
+    - apt-get install -y kubectl
     - kubectl config set-cluster k8s --server="$KUBE_URL" --insecure-skip-tls-verify=true
     - kubectl config set-credentials admin --token="$KUBE_TOKEN"
     - kubectl config set-context default --cluster=k8s --user=admin

@@ -44,8 +44,6 @@ docker-build:
     - docker:19.03.1-dind
   script:
     - echo "Package starting..."
-    - mkdir image
-    - cr.yandex/crpoatffns8a7vbcrg9j/hello:gitlab-$CI_COMMIT_SHORT_SHA
     - docker build . -t cr.yandex/crpoatffns8a7vbcrg9j/tgservice
     - docker push cr.yandex/crpoatffns8a7vbcrg9j/tgservice
   

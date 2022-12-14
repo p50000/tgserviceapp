@@ -46,15 +46,17 @@ docker-build:
     - echo "Package starting..."
     - mkdir image
     - cr.yandex/crpoatffns8a7vbcrg9j/hello:gitlab-$CI_COMMIT_SHORT_SHA
-    - docker push cr.yandex/crpoatffns8a7vbcrg9j/hello:gitlab-$CI_COMMIT_SHORT_SHA
+    - docker build . -t cr.yandex/crpoatffns8a7vbcrg9j/tgservice
+    - docker push cr.yandex/crpoatffns8a7vbcrg9j/tgservice
   
 deploy:
+  image: gcr.io/cloud-builders/kubectl:latest
   stage: deploy
   script:
-    - docker load -i image/tgservice.tar
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker tag tgservice tgservice:latest
-    - echo "Deploy starting..."
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - images = $(docker ps -q)
+    - kubectl config set-cluster k8s --server="$KUBE_URL" --insecure-skip-tls-verify=true
+    - kubectl config set-credentials admin --token="$KUBE_TOKEN"
+    - kubectl config set-context default --cluster=k8s --user=admin
+    - kubectl config use-context default
+    - sed -i "s/__VERSION__/gitlab-$CI_COMMIT_SHORT_SHA/" k8s.yaml
+    - kubectl apply -f k8s.yaml
   

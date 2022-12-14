@@ -46,7 +46,6 @@ docker-build:
     - echo "Package starting..."
     - docker build . -t cr.yandex/crpoatffns8a7vbcrg9j/tgservice
     - docker push cr.yandex/crpoatffns8a7vbcrg9j/tgservice
-    - docker run cr.yandex/crpoatffns8a7vbcrg9j/tgservice
    
 deploy:
   image: gcr.io/cloud-builders/kubectl:latest

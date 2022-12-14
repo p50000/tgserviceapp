@@ -1,4 +1,3 @@
 FROM openjdk:17
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} tgservice.jar
+COPY build/libs/tgservice-0.0.1-SNAPSHOT.jar tgservice.jar 
 ENTRYPOINT "java" "-jar" "tgservice.jar"

@@ -9,7 +9,7 @@ variables:
   TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
   
 before_script:
-    - chmod +x ./gradlew
+    - chmod 777 ./gradlew
 
 stages:
   - build

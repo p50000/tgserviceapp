@@ -1,25 +1,25 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: hello-world
+  name: tgservice
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-world-deployment
-  namespace: hello-world
+  name: tgservice-deployment
+  namespace: tgservice
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hello
+      app: tgservice
   template:
     metadata:
-      namespace: hello-world
+      namespace: tgservice
       labels:
-        app: hello
+        app: tgservice
     spec:
       containers:
-        - name: hello-world
-          image: cr.yandex/crpoatffns8a7vbcrg9j/hello:__VERSION__
+        - name: tgservice
+          image: cr.yandex/crpoatffns8a7vbcrg9j/tgservice
           imagePullPolicy: Always

@@ -48,7 +48,7 @@ docker-build:
     - docker push cr.yandex/crpoatffns8a7vbcrg9j/tgservice
   
 deploy:
-  image: ["gcr.io/cloud-builders/kubectl:latest", "cr.yandex/yc/metadata-token-docker-helper:0.2"]
+  image: gcr.io/cloud-builders/kubectl:latest
   stage: deploy
   script:
     - kubectl config set-cluster k8s --server="$KUBE_URL" --insecure-skip-tls-verify=true

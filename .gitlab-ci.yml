@@ -1,15 +1,19 @@
 image: docker:latest
 
 services:
-  - docker:dind
-
-variables:
-  SPRING_PROFILES_ACTIVE: gitlab-ci
-  TAG_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
-  TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+  - name: docker:dind
+    alias: localhost
   
 before_script:
-    - chmod 777 ./gradlew
+  - chmod +x ./gradlew
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+cache:
+  paths:
+    - $GRADLE_USER_HOME/caches/
+    - $GRADLE_USER_HOME/wrapper/
+    - $GRADLE_USER_HOME/build-cache/    
+
 
 stages:
   - build
@@ -17,30 +21,34 @@ stages:
   - deploy
 
 gradle-build:
-  image: gcr.io/cloud-builders/kubectl:latest
+  image: gradle:alpine
   stage: build
-  script:
-    - echo "Build starting..."
-    - gradle build && java -jar build/tgservice.jar
+  script: 
+    - ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+    - echo "Gradle build starts"
+    - gradle clean && gradle build
+    - echo "Gradle build finished"
   artifacts:
     paths:
-      - build/*.jar
+      - build/libs/*.jar
 
 docker-build:
   stage: package
   script:
     - echo "Package starting..."
-    - docker build --build-arg JAR_FILE=build/libs/\*.jar -t registry.gitlab.com/tgservice .
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker push registry.gitlab.com/tgservice
-
+    - mkdir image
+    - docker build --build-arg JAR_FILE=build.gradle/libs/\*.jar -t tgservice .
+    - docker save tgservice > image/tgservice.tar
+  artifacts:
+      paths:
+        - image
 deploy:
   stage: deploy
   script:
+    - docker load -i image/tgservice.tar
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker tag tgservice tgservice:latest
     - echo "Deploy starting..."
-    - chmod og= $ID_RSA
-    - apk update && apk add openssh-client
-    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
-    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker pull tgservice"
-    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker container rm -f my-app || true"
-    - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -p 0.0.0.0:8001:8001 tgservice"
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - images = $(docker ps -q)
+  

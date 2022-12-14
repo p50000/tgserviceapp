@@ -1,25 +1,19 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: tgservice
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tgservice-deployment
-  namespace: tgservice
+  name: test-node
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tgservice
+      app: test-node
   template:
     metadata:
-      namespace: tgservice
       labels:
-        app: tgservice
+        app: test-node
     spec:
       containers:
         - name: tgservice
           image: cr.yandex/crpoatffns8a7vbcrg9j/tgservice
-          imagePullPolicy: Always
+          ports:
+          - containerPort: 8001

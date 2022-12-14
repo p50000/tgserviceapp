@@ -36,6 +36,13 @@ gradle-build:
 
 docker-build:
   stage: package
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://localhost:2375/
+  image: cr.yandex/yc/metadata-token-docker-helper:0.2
+  services:
+    - docker:19.03.1-dind
   script:
     - echo "Package starting..."
     - mkdir image

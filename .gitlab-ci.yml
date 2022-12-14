@@ -44,8 +44,8 @@ docker-build:
     - docker:19.03.1-dind
   script:
     - echo "Package starting..."
-    - docker build . -t cr.yandex/crpoatffns8a7vbcrg9j/tgservice
-    - docker push cr.yandex/crpoatffns8a7vbcrg9j/tgservice
+    - docker build . -t cr.yandex/crpoatffns8a7vbcrg9j/tgservice:$CI_COMMIT_SHORT_SHA
+    - docker push cr.yandex/crpoatffns8a7vbcrg9j/tgservice:$CI_COMMIT_SHORT_SHA
    
 deploy:
   image: gcr.io/cloud-builders/kubectl:latest
@@ -55,5 +55,5 @@ deploy:
     - kubectl config set-credentials admin --token="$KUBE_TOKEN"
     - kubectl config set-context default --cluster=k8s --user=admin
     - kubectl config use-context default
-    - sed -i "s/__VERSION__/gitlab-$CI_COMMIT_SHORT_SHA/" k8s.yaml
+    - sed -i "s/__VERSION__/$CI_COMMIT_SHORT_SHA/" k8s.yaml
     - kubectl apply -f k8s.yaml  

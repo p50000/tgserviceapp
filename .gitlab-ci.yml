@@ -25,7 +25,7 @@ gradle-build:
   stage: build
   script:
     - echo "Build starting..."
-    - ./gradlew --build-cache assemble && java -jar build/tgservice.jar
+    - ./gradlew assemble && java -jar build/tgservice.jar
   artifacts:
     paths:
       - build/*.jar

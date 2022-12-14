@@ -26,7 +26,6 @@ gradle-build:
   image: gradle:alpine
   stage: build
   script: 
-    - ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
     - echo "Gradle build starts"
     - gradle clean && gradle build
     - echo "Gradle build finished"
@@ -46,7 +45,7 @@ docker-build:
   script:
     - echo "Package starting..."
     - mkdir image
-    - docker build --build-arg JAR_FILE=build.gradle/libs/\*.jar -t tgservice .
+    - cr.yandex/crpoatffns8a7vbcrg9j/hello:gitlab-$CI_COMMIT_SHORT_SHA
     - docker push cr.yandex/crpoatffns8a7vbcrg9j/hello:gitlab-$CI_COMMIT_SHORT_SHA
   
 deploy:

@@ -1,8 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-node-namespace
+---  
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-node
-  namespace: default
 spec:
   replicas: 1
   selector:
@@ -10,7 +14,6 @@ spec:
       app: test-node
   template:
     metadata:
-      namespace: default
       labels:
         app: test-node
     spec:

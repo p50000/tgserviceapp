@@ -19,6 +19,6 @@ spec:
     spec:
       containers:
         - name: tgservice
-          image: cr.yandex/crpoatffns8a7vbcrg9j/tgservice:__VERSION__
+          image: cr.yandex/crpoatffns8a7vbcrg9j/tgservice
           ports:
           - containerPort: 8001

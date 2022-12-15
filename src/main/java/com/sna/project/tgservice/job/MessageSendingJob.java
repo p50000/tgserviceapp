@@ -1,12 +1,11 @@
 package com.sna.project.tgservice.job;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.sna.project.tgservice.client.TelegramClient;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,10 +25,15 @@ public class MessageSendingJob {
         Thread worker = new Thread(() -> {
             while (true) {
                 try {
-                    var response = telegramClient.sendMessages(342806863L, "renobta hello!");
-
-                    Thread.sleep(60000);
-                } catch (InterruptedException | IOException e) {
+                    for (Long id : getReceivers()) {
+                        var response = telegramClient.sendMessages(id, "Hello world!");
+                        System.out.printf("\nChat id: %d. Response code is %s\n", id,
+                                response == null
+                                        ? "UNKNOWN"
+                                        : String.valueOf(response.statusCode()));
+                    }
+                    Thread.sleep(180_000);
+                } catch (InterruptedException e) {
                     System.out.println(e.getMessage());
                     // Restore the interrupted status
                     Thread.currentThread().interrupt();
@@ -38,5 +42,12 @@ public class MessageSendingJob {
             }
         });
         worker.start();
+    }
+
+    /**
+     * Mock method for now
+     */
+    private List<Long> getReceivers() {
+        return List.of(342806863L, 0L, 507765513L, 860969225L);
     }
 }

@@ -8,6 +8,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
 import com.sna.project.tgservice.metrics.Metrics;
 
 import javax.net.ssl.SSLSession;
@@ -30,7 +32,7 @@ public class TelegramClient {
         this.jsonWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
     }
 
-    public HttpResponse<String> sendMessages(Long chatId, String text) throws IOException, InterruptedException {
+    public HttpResponse<String> sendMessages(Long chatId, String text)  {
         HttpRequest request = null;
         try {
             request = HttpRequest.newBuilder()
@@ -46,13 +48,19 @@ public class TelegramClient {
         }
 
         HttpResponse<String> res = null;
+        long totalTime = 0L;
 
-            try {
-                res = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            } finally {
-                Metrics.getRequestDuration().labels(String.valueOf(res.statusCode()), res.request().method()).observe(8);
-
-            }
+        try {
+            long startTime = System.nanoTime();
+            res = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            totalTime = TimeUnit.SECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException | IOException ex) {
+          res = new MockHttpResponse(500, "EXCEPTION CAUGHT");
+        } finally {
+            var statusCode = res == null ? "UNKNOWN" : String.valueOf(res.statusCode());
+            var method = res == null ? "UNKNOWN" : res.request().method();
+            Metrics.getRequestDuration().labels(statusCode, method).observe(totalTime);
+        }
 
         return res;
     }

@@ -1,5 +1,9 @@
 package com.sna.project.tgservice;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.InetSocketAddress;
+
 import com.sun.net.httpserver.HttpServer;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.HTTPServer;
@@ -7,13 +11,6 @@ import io.prometheus.client.exporter.common.TextFormat;
 import io.prometheus.client.hotspot.DefaultExports;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.embedded.jetty.JettyReactiveWebServerFactory;
-import org.springframework.boot.web.embedded.jetty.JettyWebServer;
-import org.springframework.http.client.reactive.JettyResourceFactory;
-
-import java.io.StringWriter;
-import java.io.IOException;
-import java.net.InetSocketAddress;
 
 
 @SpringBootApplication
